@@ -14,7 +14,7 @@ st.set_page_config(
 # -------------------------
 # Load Data
 # -------------------------
-file_path = r"C:\Users\vinay\Documents\DS\College_seats\allotment_results.csv"
+file_path = "allotment_results.csv"
 df = pd.read_csv(file_path)
 
 # -------------------------
@@ -100,3 +100,4 @@ if student_id:
 # -------------------------
 with st.expander("📋 Show Full Allocation Data"):
     st.dataframe(df, use_container_width=True)
+
