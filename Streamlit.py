@@ -18,7 +18,7 @@ file_path = "allotment_results.csv"
 df = pd.read_csv(file_path)
 
 # -------------------------
-# Adaptive Styling (Light + Dark)
+# Custom CSS
 # -------------------------
 st.markdown(
     """
@@ -29,33 +29,25 @@ st.markdown(
         font-weight: bold;
         padding: 10px;
     }
-
-    /* Light mode */
-    .stApp[data-theme="light"] .title { color: #2C3E50; }
-    .stApp[data-theme="light"] .result-card {
-        background-color: #F8F9F9;
-        color: #2C3E50;
+    .badge {
+        display: inline-block;
+        padding: 5px 12px;
+        border-radius: 20px;
+        margin: 3px;
+        font-size: 14px;
+        color: white;
+        font-weight: 500;
+    }
+    .blue { background-color: #3498DB; }
+    .green { background-color: #2ECC71; }
+    .orange { background-color: #E67E22; }
+    .purple { background-color: #9B59B6; }
+    .card {
         padding: 20px;
         border-radius: 15px;
+        margin-top: 15px;
+        background: linear-gradient(135deg, #f8f9f9, #ecf0f1);
         box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-        margin-top: 20px;
-    }
-
-    /* Dark mode */
-    .stApp[data-theme="dark"] .title { color: #ECF0F1; }
-    .stApp[data-theme="dark"] .result-card {
-        background-color: #2C3E50;
-        color: #ECF0F1;
-        padding: 20px;
-        border-radius: 15px;
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.4);
-        margin-top: 20px;
-    }
-
-    /* Input box styling */
-    .stTextInput>div>div>input {
-        border-radius: 12px;
-        border: 2px solid #3498DB;
     }
     </style>
     """,
@@ -78,26 +70,49 @@ if student_id:
     if not result.empty:
         st.success("✅ Student Found")
 
-        # Display student details in card format
-        for _, row in result.iterrows():
-            st.markdown(f"""
-                <div class="result-card">
-                    <h3>👤 {row['Name']} ({row['UniqueID']})</h3>
-                    <p><b>🧑 Gender:</b> {row['Gender']}</p>
-                    <p><b>🪪 Caste:</b> {row['Caste']}</p>
-                    <p><b>📊 Rank:</b> {row['Rank']}</p>
-                    <p><b>🏫 Institution:</b> {row['Institution']}</p>
-                    <p><b>🏷️ College ID:</b> {row['CollegeID']}</p>
-                    <p><b>⭐ Preference Number:</b> {row['PrefNumber']}</p>
-                </div>
-            """, unsafe_allow_html=True)
+        row = result.iloc[0]
+
+        # Student Card with Badges
+        st.markdown(f"""
+            <div class="card">
+                <h3>👤 {row['Name']} ({row['UniqueID']})</h3>
+                <span class="badge blue">Gender: {row['Gender']}</span>
+                <span class="badge green">Caste: {row['Caste']}</span>
+                <span class="badge orange">Rank: {row['Rank']}</span>
+                <span class="badge purple">College ID: {row['CollegeID']}</span>
+            </div>
+        """, unsafe_allow_html=True)
+
+        # Tabs for Details
+        tabs = st.tabs(["📊 Rank & Performance", "🏫 College Details", "📋 Full Profile"])
+        with tabs[0]:
+            rank = int(row['Rank'])
+            max_rank = int(df['Rank'].max())
+            progress = 1 - (rank / max_rank)
+            st.progress(progress)
+            st.write(f"📊 Rank Position: **{rank} out of {max_rank}**")
+
+        with tabs[1]:
+            st.write(f"🏫 Institution: **{row['Institution']}**")
+            st.write(f"⭐ Preference Number: **{row['PrefNumber']}**")
+
+        with tabs[2]:
+            st.write(f"👤 Name: {row['Name']}")
+            st.write(f"🧑 Gender: {row['Gender']}")
+            st.write(f"🪪 Caste: {row['Caste']}")
+            st.write(f"📊 Rank: {row['Rank']}")
+            st.write(f"🏫 Institution: {row['Institution']}")
+            st.write(f"🏷️ College ID: {row['CollegeID']}")
+            st.write(f"⭐ Preference Number: {row['PrefNumber']}")
 
     else:
         st.error("❌ Student ID not found in records.")
 
 # -------------------------
-# Show All Data (Toggle)
+# Show All Data (Leaderboard with Highlight)
 # -------------------------
-with st.expander("📋 Show Full Allocation Data"):
-    st.dataframe(df, use_container_width=True)
+with st.expander("📋 Show Full Allocation Data (Leaderboard)"):
+    def highlight_student(s):
+        return ['background-color: #ffeaa7' if str(s.UniqueID) == student_id else '' for _ in s]
 
+    st.dataframe(df.style.apply(highlight_student, axis=1), use_container_width=True)
