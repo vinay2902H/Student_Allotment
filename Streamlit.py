@@ -18,7 +18,7 @@ file_path = "allotment_results.csv"
 df = pd.read_csv(file_path)
 
 # -------------------------
-# Custom CSS
+# Adaptive CSS (Light + Dark Mode)
 # -------------------------
 st.markdown(
     """
@@ -29,26 +29,43 @@ st.markdown(
         font-weight: bold;
         padding: 10px;
     }
+
+    /* ----- Light Mode ----- */
+    .stApp[data-theme="light"] .title { color: #2C3E50; }
+    .stApp[data-theme="light"] .card {
+        background: linear-gradient(135deg, #f8f9f9, #ecf0f1);
+        color: #2C3E50;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    }
+
+    /* ----- Dark Mode ----- */
+    .stApp[data-theme="dark"] .title { color: #ECF0F1; }
+    .stApp[data-theme="dark"] .card {
+        background: linear-gradient(135deg, #2C3E50, #34495E);
+        color: #ECF0F1;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .card {
+        padding: 20px;
+        border-radius: 15px;
+        margin-top: 15px;
+    }
+
+    /* Badge Styles */
     .badge {
         display: inline-block;
         padding: 5px 12px;
         border-radius: 20px;
         margin: 3px;
         font-size: 14px;
-        color: white;
         font-weight: 500;
+        color: white;
     }
     .blue { background-color: #3498DB; }
     .green { background-color: #2ECC71; }
     .orange { background-color: #E67E22; }
     .purple { background-color: #9B59B6; }
-    .card {
-        padding: 20px;
-        border-radius: 15px;
-        margin-top: 15px;
-        background: linear-gradient(135deg, #f8f9f9, #ecf0f1);
-        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
-    }
     </style>
     """,
     unsafe_allow_html=True
